@@ -85,6 +85,13 @@ app.post("/api/contact", formLimiter, async (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
+  const submitDate = new Date().toLocaleDateString("en-US", {
+    timeZone: "Africa/Cairo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
   const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
             <div style="background-color: #000000ff; color: white; padding: 20px; text-align: center;">             
@@ -94,6 +101,7 @@ app.post("/api/contact", formLimiter, async (req, res) => {
             
             <div style="padding: 20px;">
                 <h3 style="color: #2c3e50; border-bottom: 2px solid #f6831fff; padding-bottom: 5px;">👤 Contact Details</h3>
+                <p><strong>Date:</strong> ${submitDate}</p>
                 <p><strong>Name:</strong> ${name}</p>
                 <p><strong>Email:</strong> ${email}</p>
                 <p><strong>Phone:</strong> ${phone}</p>
@@ -119,7 +127,7 @@ app.post("/api/contact", formLimiter, async (req, res) => {
   // 2. Save to Google Sheet
   // Columns: ['Timestamp', 'Form Type', 'Name', 'Email', 'Phone', 'Message']
   const sheetResult = await appendToSheet("CONTACT", [
-    new Date().toLocaleString("en-GB", { timeZone: "Africa/Cairo" }),
+    submitDate,
     name,
     email,
     `'${phone}`,
@@ -145,13 +153,28 @@ app.post("/api/register-event", formLimiter, async (req, res) => {
     parentEmail,
     parentPhone,
     childName,
-    childDOB,
     favoriteColor1,
     favoriteColor2,
     flipBranch,
     guests,
     message,
   } = req.body;
+  let { childDOB } = req.body;
+
+  if (childDOB && childDOB.includes("/")) {
+    const parts = childDOB.split("/");
+    if (parts.length === 3) {
+      // Convert DD/MM/YYYY to MM/DD/YYYY
+      childDOB = `${parts[1]}/${parts[0]}/${parts[2]}`;
+    }
+  }
+
+  const submitDate = new Date().toLocaleDateString("en-US", {
+    timeZone: "Africa/Cairo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 
   const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -163,6 +186,7 @@ app.post("/api/register-event", formLimiter, async (req, res) => {
             
             <div style="padding: 20px;">
                 <h3 style="color: #2c3e50; border-bottom: 2px solid #f6831fff; padding-bottom: 5px;">👨‍👩‍👧 Parent Information</h3>
+                <p><strong>Date:</strong> ${submitDate}</p>
                 <p><strong>Name:</strong> ${parentName}</p>
                 <p><strong>Email:</strong> ${parentEmail}</p>
                 <p><strong>Phone:</strong> ${parentPhone}</p>
@@ -200,7 +224,7 @@ app.post("/api/register-event", formLimiter, async (req, res) => {
 
   // Columns: ['DATE', 'P NAME', 'PHONE', 'MAIL', 'C NAME', 'C DOB', 'COLOR 1', 'COLOR 2', 'FLIP BRANCH', 'GUESTS']
   const sheetResult = await appendToSheet("EVENT", [
-    new Date().toLocaleString("en-GB", { timeZone: "Africa/Cairo" }),
+    submitDate,
     parentName,
     `'${parentPhone}`,
     parentEmail,
@@ -232,14 +256,29 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
     whatsappPhone,
     geziraMembership,
     childName,
-    childDOB,
     childSchool,
     emergencyName,
     emergencyPhone,
     message,
   } = req.body;
+  let { childDOB } = req.body;
+
+  if (childDOB && childDOB.includes("/")) {
+    const parts = childDOB.split("/");
+    if (parts.length === 3) {
+      // Convert DD/MM/YYYY to MM/DD/YYYY
+      childDOB = `${parts[1]}/${parts[0]}/${parts[2]}`;
+    }
+  }
 
   const finalWhatsapp = whatsappPhone || parentPhone;
+
+  const submitDate = new Date().toLocaleDateString("en-US", {
+    timeZone: "Africa/Cairo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 
   const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -250,6 +289,7 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
             
             <div style="padding: 20px;">
                 <h3 style="color: #2c3e50; border-bottom: 2px solid #f6831fff; padding-bottom: 5px;">📍 Registration Details</h3>
+                <p><strong>Submission Date:</strong> ${submitDate}</p>
                 <p><strong>Location:</strong> ${locationName || "General Location"}</p>
 
                 <h3 style="color: #2c3e50; border-bottom: 2px solid #f6831fff; padding-bottom: 5px;">👨‍👩‍👧 Parent Information</h3>
@@ -309,7 +349,7 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
     "",
     parentEmail,
     geziraMembership || "",
-    new Date().toLocaleString("en-GB", { timeZone: "Africa/Cairo" }),
+    submitDate,
     message || "",
     "",
     "",
