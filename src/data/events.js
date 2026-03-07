@@ -110,7 +110,7 @@ export const events = [
     availability: "available",
     description: "events.current-event-description",
     image: { src: current_event, alt: "current_event" },
-    price: "2850 LE",
+    price: "3350 LE",
   },
 ];
 

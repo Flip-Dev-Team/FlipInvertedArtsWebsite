@@ -102,7 +102,7 @@ const EventsPage = () => {
                 fontStyle: "italic",
               }}
             >
-              Before March 7th
+              {t("events.current-event-price-description")}
             </Typography>
             <Typography
               variant="h2"
