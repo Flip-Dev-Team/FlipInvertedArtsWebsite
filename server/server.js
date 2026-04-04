@@ -3,6 +3,9 @@ import nodemailer from "nodemailer";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
+import dns from "dns";
+dns.setDefaultResultOrder("ipv4first");
+
 // Load environment variables immediately
 dotenv.config();
 
