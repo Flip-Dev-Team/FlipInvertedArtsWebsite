@@ -69,9 +69,10 @@ const sendMail = async (to, subject, html) => {
   }
 };
 
-import { appendToSheet, checkSheetsConnection } from "./sheets.js";
+// import { appendToSheet, checkSheetsConnection } from "./sheets.js";
 
 // Verify Sheets Connection on Startup
+/*
 checkSheetsConnection().then((result) => {
   if (result.success) {
     console.log("✅ Google Sheets connected successfully");
@@ -79,6 +80,7 @@ checkSheetsConnection().then((result) => {
     console.warn("⚠️ Google Sheets connection failed:", result.error);
   }
 });
+*/
 
 // 1. Contact Form Endpoint
 app.post("/api/contact", formLimiter, async (req, res) => {
@@ -129,6 +131,7 @@ app.post("/api/contact", formLimiter, async (req, res) => {
 
   // 2. Save to Google Sheet
   // Columns: ['Timestamp', 'Form Type', 'Name', 'Email', 'Phone', 'Message']
+  /*
   const sheetResult = await appendToSheet("CONTACT", [
     submitDate,
     name,
@@ -136,12 +139,13 @@ app.post("/api/contact", formLimiter, async (req, res) => {
     `'${phone}`,
     message,
   ]);
+  */
 
   // Check email result primarily, but log sheet result
   if (adminResult.success) {
     res.json({
       message: "Contact email sent successfully",
-      sheetSaved: sheetResult.success,
+      sheetSaved: false, // temporarily disabled
     });
   } else {
     res.status(500).json({ error: "Failed to send email" });
@@ -226,6 +230,7 @@ app.post("/api/register-event", formLimiter, async (req, res) => {
   ]);
 
   // Columns: ['DATE', 'P NAME', 'PHONE', 'MAIL', 'C NAME', 'C DOB', 'COLOR 1', 'COLOR 2', 'FLIP BRANCH', 'GUESTS']
+  /*
   const sheetResult = await appendToSheet("EVENT", [
     submitDate,
     parentName,
@@ -238,11 +243,12 @@ app.post("/api/register-event", formLimiter, async (req, res) => {
     flipBranch,
     guests || "",
   ]);
+  */
 
   if (adminResult.success) {
     res.json({
       message: "Event registration email sent successfully",
-      sheetSaved: sheetResult.success,
+      sheetSaved: false, // temporarily disabled
     });
   } else {
     res.status(500).json({ error: "Failed to send email" });
@@ -338,6 +344,7 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
   ]);
 
   // Columns: ['LOCATION', 'C NAME', '', '', 'P NAME', 'PHONE', 'WHATSAPP', 'EM CONTACT NAME', 'EC PHONE', 'C DOB', '', 'MAIL', 'MEMBERSHIP', 'DATE', 'MESSAGE', '', '', '', 'C SCHOOL']
+  /*
   const sheetResult = await appendToSheet("SCHEDULE", [
     locationName || "",
     childName,
@@ -362,11 +369,12 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
 
   // Append empty row for spacing
   await appendToSheet("SCHEDULE", []);
+  */
 
   if (adminResult.success) {
     res.json({
       message: "Schedule registration email sent successfully",
-      sheetSaved: sheetResult.success,
+      sheetSaved: false, // temporarily disabled
     });
   } else {
     res.status(500).json({ error: "Failed to send email" });
