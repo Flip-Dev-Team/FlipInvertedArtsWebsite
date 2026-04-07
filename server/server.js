@@ -52,7 +52,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Helper to send mail
-const sendMail = async (to, subject, html) => {
+const sendMail = async (to, subject, html, attachments = []) => {
   try {
     const info = await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -60,6 +60,7 @@ const sendMail = async (to, subject, html) => {
       cc: process.env.EMAIL_CC,
       subject: subject,
       html: html,
+      attachments: attachments,
     });
     console.log("Message sent: %s", info.messageId);
     return { success: true, messageId: info.messageId };
@@ -97,6 +98,10 @@ app.post("/api/contact", formLimiter, async (req, res) => {
     day: "2-digit",
   });
 
+  const csvContent =
+    "DATE,NAME,EMAIL,PHONE,MESSAGE\n" +
+    `"${submitDate}","${name}","${email}","'${phone}","${message.replace(/"/g, '""')}"`;
+
   const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
             <div style="background-color: #000000ff; color: white; padding: 20px; text-align: center;">             
@@ -123,10 +128,26 @@ app.post("/api/contact", formLimiter, async (req, res) => {
         </div>
     `;
 
-  // Send emails in parallel (Same content to both)
+  const attachments = [
+    {
+      filename: `contact_${name.replace(/\s+/g, "_")}.csv`,
+      content: csvContent,
+      contentType: "text/csv",
+    },
+  ];
+
   const [adminResult, userResult] = await Promise.all([
-    sendMail(process.env.EMAIL_USER, `Contact Request from ${name}`, html),
-    sendMail(email, `Contact Request Received - Flip Inverted Arts`, html),
+    sendMail(
+      process.env.EMAIL_USER,
+      `Contact Request from ${name}`,
+      html,
+      attachments,
+    ),
+    sendMail(
+      email,
+      `Contact Request Received - Flip Inverted Arts`,
+      html,
+    ),
   ]);
 
   // 2. Save to Google Sheet
@@ -144,7 +165,7 @@ app.post("/api/contact", formLimiter, async (req, res) => {
   // Check email result primarily, but log sheet result
   if (adminResult.success) {
     res.json({
-      message: "Contact email sent successfully",
+      message: "Contact email sent successfully (with CSV backup)",
       sheetSaved: false, // temporarily disabled
     });
   } else {
@@ -183,6 +204,11 @@ app.post("/api/register-event", formLimiter, async (req, res) => {
     day: "2-digit",
   });
 
+  const csvHeaders =
+    "DATE,P NAME,PHONE,MAIL,C NAME,C DOB,COLOR 1,COLOR 2,FLIP BRANCH,GUESTS";
+  const csvValues = `"${submitDate}","${parentName}","'${parentPhone}","${parentEmail}","${childName}","${childDOB}","${favoriteColor1}","${favoriteColor2 || ""}","${flipBranch}","${guests || ""}"`;
+  const csvContent = `${csvHeaders}\n${csvValues}`;
+
   const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
             <div style="background-color: #000000ff; color: white; padding: 20px; text-align: center;">
@@ -219,9 +245,21 @@ app.post("/api/register-event", formLimiter, async (req, res) => {
         </div>
     `;
 
-  // Send emails in parallel (Same content to both)
+  const attachments = [
+    {
+      filename: `event_${childName.replace(/\s+/g, "_")}.csv`,
+      content: csvContent,
+      contentType: "text/csv",
+    },
+  ];
+
   const [adminResult, userResult] = await Promise.all([
-    sendMail(process.env.EMAIL_USER, `Event Registration: ${childName}`, html),
+    sendMail(
+      process.env.EMAIL_USER,
+      `Event Registration: ${childName}`,
+      html,
+      attachments,
+    ),
     sendMail(
       parentEmail,
       `Event Registration Received - Flip Inverted Arts`,
@@ -247,7 +285,7 @@ app.post("/api/register-event", formLimiter, async (req, res) => {
 
   if (adminResult.success) {
     res.json({
-      message: "Event registration email sent successfully",
+      message: "Event registration email sent successfully (with CSV backup)",
       sheetSaved: false, // temporarily disabled
     });
   } else {
@@ -289,6 +327,11 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
     day: "2-digit",
   });
 
+  const csvHeaders =
+    "LOCATION,C NAME,,,P NAME,PHONE,WHATSAPP,EM CONTACT NAME,EC PHONE,C DOB,,MAIL,MEMBERSHIP,DATE,MESSAGE,,,,C SCHOOL";
+  const csvValues = `"${locationName || ""}","${childName}","","","${parentName}","'${parentPhone}","'${finalWhatsapp}","${emergencyName}","'${emergencyPhone}","${childDOB}","","${parentEmail}","${geziraMembership || ""}","${submitDate}","${(message || "").replace(/"/g, '""')}","","","","${childSchool}"`;
+  const csvContent = `${csvHeaders}\n${csvValues}`;
+
   const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
             <div style="background-color: #000000ff; color: white; padding: 20px; text-align: center;">
@@ -329,12 +372,20 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
         </div>
     `;
 
-  // Send emails in parallel (Same content to both)
+  const attachments = [
+    {
+      filename: `schedule_${childName.replace(/\s+/g, "_")}.csv`,
+      content: csvContent,
+      contentType: "text/csv",
+    },
+  ];
+
   const [adminResult, userResult] = await Promise.all([
     sendMail(
       process.env.EMAIL_USER,
       `Schedule Registration [${locationName}]: ${childName}`,
       html,
+      attachments,
     ),
     sendMail(
       parentEmail,
@@ -373,7 +424,8 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
 
   if (adminResult.success) {
     res.json({
-      message: "Schedule registration email sent successfully",
+      message:
+        "Schedule registration email sent successfully (with CSV backup)",
       sheetSaved: false, // temporarily disabled
     });
   } else {
