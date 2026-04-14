@@ -44,6 +44,9 @@ const EventsPage = () => {
     }
   }, [state]);
 
+  // when disabled
+  const registrationDisabled = true;
+
   return (
     <Box>
       <HalfPageLanding
@@ -115,13 +118,16 @@ const EventsPage = () => {
                 letterSpacing: -2,
               }}
             >
-              {availableEvents[0].price}
+              {registrationDisabled
+                ? t("events.see-you-there")
+                : availableEvents[0].price}
             </Typography>
           </Box>
           <Box>
             <Button
               variant="contained"
               size="large"
+              disabled={registrationDisabled}
               onClick={() => navigate("/register-event")}
               sx={{
                 px: { xs: 4, md: 6 },
@@ -136,10 +142,16 @@ const EventsPage = () => {
                   boxShadow: "0 15px 30px rgba(0,0,0,0.2)",
                   background: "primary.dark",
                 },
+                // when disabled
+                "&.Mui-disabled": {
+                  cursor: "not-allowed",
+                  pointerEvents: "auto",
+                },
+                //
                 transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
               }}
             >
-              Register Now
+              {t("buttons.register-now")}
             </Button>
           </Box>
         </Paper>
@@ -260,7 +272,7 @@ const EventsPage = () => {
                     objectFit: "cover",
                     display: "block",
                   }}
-                  alt="Winter"
+                  alt={t("events.annual.winter.alt")}
                 />
               </Box>
               <Box sx={{ flex: 1 }}>
