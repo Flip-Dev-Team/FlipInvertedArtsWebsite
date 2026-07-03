@@ -45,11 +45,11 @@ import new_cairo_1 from "../assets/schedules/new_cairo_1.webp";
 // import new_cairo_2 from "../assets/schedules/new_cairo_2.webp";
 // import new_cairo_3 from "../assets/schedules/new_cairo_3.webp";
 
-// import almaza_1 from "../assets/schedules/almaza_1.webp";
+import almaza_1 from "../assets/schedules/almaza_1.webp";
 // import almaza_2 from "../assets/schedules/almaza_2.webp";
 // import almaza_3 from "../assets/schedules/almaza_3.webp";
 
-// import diplo_1 from "../assets/schedules/diplo_1.webp";
+import diplo_1 from "../assets/schedules/diplo_1.webp";
 // import diplo_2 from "../assets/schedules/diplo_2.webp";
 // import diplo_3 from "../assets/schedules/diplo_3.webp";
 
@@ -175,8 +175,8 @@ export const schedules = [
       formDescription: "schedules.almaza-bay.form-description",
       landingImage: `${R2_URL}/landing/landing_almaza.webp`,
       images: [
-        "/coming_soon.webp",
-        // almaza_1,
+        // "/coming_soon.webp",
+        almaza_1,
         // almaza_2,
         // almaza_3
       ],
@@ -195,8 +195,8 @@ export const schedules = [
       formDescription: "schedules.diplo.form-description",
       landingImage: `${R2_URL}/landing/landing_diplo.webp`,
       images: [
-        "/coming_soon.webp",
-        // diplo_1,
+        // "/coming_soon.webp",
+        diplo_1,
         // diplo_2,
         // diplo_3,
       ],
