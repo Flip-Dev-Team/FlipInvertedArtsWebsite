@@ -586,6 +586,8 @@
       "guests": "Names of Guests written in Arabic if possible (comma separated)",
       "additional-notes": "Additional Message / Notes",
       "gezira-membership": "Gezira Membership Number",
+      "sahel-compound": "Name of compound in Sahel",
+      "sahel-last-day": "Last day in Sahel (around what date)",
       "emergency-name": "Emergency Contact Name",
       "emergency-phone": "Emergency Contact Phone",
       "local-phone": "Local Phone Number",

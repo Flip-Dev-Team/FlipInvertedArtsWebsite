@@ -28,3 +28,6 @@ package-lock.json
 service-account.json
 service-account.json.bak
 AGENT.md
+
+.claude/*
+skills-lock.json

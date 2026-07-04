@@ -302,6 +302,8 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
     parentPhone,
     whatsappPhone,
     geziraMembership,
+    sahelCompound,
+    sahelLastDay,
     childName,
     childSchool,
     emergencyName,
@@ -328,8 +330,8 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
   });
 
   const csvHeaders =
-    "LOCATION,C NAME,,,P NAME,PHONE,WHATSAPP,EM CONTACT NAME,EC PHONE,C DOB,,MAIL,MEMBERSHIP,DATE,MESSAGE,,,,C SCHOOL";
-  const csvValues = `"${locationName || ""}","${childName}","","","${parentName}","'${parentPhone}","'${finalWhatsapp}","${emergencyName}","'${emergencyPhone}","${childDOB}","","${parentEmail}","${geziraMembership || ""}","${submitDate}","${(message || "").replace(/"/g, '""')}","","","","${childSchool}"`;
+    "LOCATION,C NAME,,,P NAME,PHONE,WHATSAPP,EM CONTACT NAME,EC PHONE,C DOB,,MAIL,MEMBERSHIP,DATE,MESSAGE,,,,C SCHOOL,SAHEL COMPOUND,SAHEL LAST DAY";
+  const csvValues = `"${locationName || ""}","${childName}","","","${parentName}","'${parentPhone}","'${finalWhatsapp}","${emergencyName}","'${emergencyPhone}","${childDOB}","","${parentEmail}","${geziraMembership || ""}","${submitDate}","${(message || "").replace(/"/g, '""')}","","","","${childSchool}","${sahelCompound || ""}","${sahelLastDay || ""}"`;
   const csvContent = `${csvHeaders}\n${csvValues}`;
 
   const html = `
@@ -350,7 +352,9 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
                 <p><strong>Phone:</strong> ${parentPhone}</p>
                 <p><strong>WhatsApp:</strong> ${finalWhatsapp}</p>
                 ${geziraMembership ? `<p><strong>Gezira Membership #:</strong> ${geziraMembership}</p>` : ""}
-                
+                ${sahelCompound ? `<p><strong>Compound in Sahel:</strong> ${sahelCompound}</p>` : ""}
+                ${sahelLastDay ? `<p><strong>Last day in Sahel:</strong> ${sahelLastDay}</p>` : ""}
+
                 <h3 style="color: #2c3e50; border-bottom: 2px solid #f6831fff; padding-bottom: 5px; margin-top: 25px;">👶 Child Information</h3>
                 <p><strong>Name:</strong> ${childName}</p>
                 <p><strong>Date of Birth:</strong> ${childDOB}</p>
@@ -394,7 +398,7 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
     ),
   ]);
 
-  // Columns: ['LOCATION', 'C NAME', '', '', 'P NAME', 'PHONE', 'WHATSAPP', 'EM CONTACT NAME', 'EC PHONE', 'C DOB', '', 'MAIL', 'MEMBERSHIP', 'DATE', 'MESSAGE', '', '', '', 'C SCHOOL']
+  // Columns: ['LOCATION', 'C NAME', '', '', 'P NAME', 'PHONE', 'WHATSAPP', 'EM CONTACT NAME', 'EC PHONE', 'C DOB', '', 'MAIL', 'MEMBERSHIP', 'DATE', 'MESSAGE', '', '', '', 'C SCHOOL', 'SAHEL COMPOUND', 'SAHEL LAST DAY']
   /*
   const sheetResult = await appendToSheet("SCHEDULE", [
     locationName || "",
@@ -416,6 +420,8 @@ app.post("/api/register-schedule", formLimiter, async (req, res) => {
     "",
     "",
     childSchool,
+    sahelCompound || "",
+    sahelLastDay || "",
   ]);
 
   // Append empty row for spacing

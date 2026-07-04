@@ -32,6 +32,7 @@ export default function ScheduleRegistrationPage() {
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const [isAdult, setIsAdult] = useState(false);
   const [dobError, setDobError] = useState(false);
+  const [sahelLastDayError, setSahelLastDayError] = useState(false);
   const [isWhatsappSame, setIsWhatsappSame] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -325,6 +326,54 @@ export default function ScheduleRegistrationPage() {
                 fullWidth
                 required
               />
+
+              {(locationName.toLowerCase().includes("almaza") ||
+                locationName.toLowerCase().includes("diplo")) && (
+                <>
+                  <TextField
+                    name="sahelCompound"
+                    label={t("forms.labels.sahel-compound")}
+                    variant="outlined"
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    name="sahelLastDay"
+                    label={t("forms.labels.sahel-last-day")}
+                    variant="outlined"
+                    fullWidth
+                    required
+                    placeholder={t("forms.placeholders.dob")}
+                    helperText={
+                      sahelLastDayError
+                        ? "Invalid Date (DD/MM/YYYY)"
+                        : "e.g. 25/12/2015"
+                    }
+                    error={sahelLastDayError}
+                    inputProps={{ inputMode: "numeric" }}
+                    onBlur={(e) => {
+                      const val = e.target.value;
+                      if (!val) {
+                        setSahelLastDayError(false);
+                        return;
+                      }
+                      const regex =
+                        /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/;
+                      setSahelLastDayError(!regex.test(val));
+                    }}
+                    onChange={(e) => {
+                      setSahelLastDayError(false);
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length > 2)
+                        value = value.slice(0, 2) + "/" + value.slice(2);
+                      if (value.length > 5)
+                        value = value.slice(0, 5) + "/" + value.slice(5);
+                      if (value.length > 10) value = value.slice(0, 10);
+                      e.target.value = value;
+                    }}
+                  />
+                </>
+              )}
 
               {/* Emergency Contact */}
               <Typography
